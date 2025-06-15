@@ -39,15 +39,15 @@ public class Tests {
         JSONObject json =new JSONObject();
         json.put("name","Abdo");
         json.put("Job","Tester");
-        System.out.println(json.toJSONString());
+
         baseURI="https://reqres.in/api";
 
-        given()
+        given().header("x-api-key","reqres-free-v1")
             .body(json.toJSONString())
                 .when()
                 .post("/users")
                 .then()
-                .statusCode(201);
+                .statusCode(201).log().all();
     }
 
 
