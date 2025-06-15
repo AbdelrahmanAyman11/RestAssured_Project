@@ -17,23 +17,27 @@ public class Tests {
     @Test
     //Verify that Status Code Is '200' OK
     //get All Users .
-    public void Test_1(){
-        Response response = RestAssured.get("https://reqres.in/api/users?page=2");
-        Assert.assertEquals(response.getStatusCode(),200);
+    public void GetUsers(){
+    given().header("x-api-key","reqres-free-v1")
+            .get("https://reqres.in/api/users?page=2")
+            .then()
+            .statusCode(200);
     }
 
 
     //get Request for user No #3
     @Test
-    public void Test_2(){
-        given().get("https://reqres.in/api/users?page=2")
-                .then().body("data[2].id",equalTo(9));
+    public void Get_Spec_User(){
+        given().header("x-api-key","reqres-free-v1")
+                .get("https://reqres.in/api/users?page=2")
+                .then()
+                .body("data[2].id",equalTo(9));
 
     }
 
     //Create a New User
     @Test
-    public void Test_3(){
+    public void Add_User(){
 
 
         JSONObject json =new JSONObject();
@@ -50,5 +54,34 @@ public class Tests {
                 .statusCode(201).log().all();
     }
 
+    @Test
+    public void Update_User()
+    {
+        JSONObject json =new JSONObject();
+        json.put("name","AbdelrahmanAyman");
+        json.put("Job","Software Tester");
 
-}
+        baseURI="https://reqres.in/api";
+
+        given().header("x-api-key","reqres-free-v1")
+                .body(json.toJSONString())
+                .when()
+                .put("/users/2")
+                .then()
+                .statusCode(200).log().all();
+
+    }
+    @Test
+    public void Delete_User()
+    {
+        baseURI="https://reqres.in/api";
+        given().header("x-api-key","reqres-free-v1")
+                .when()
+                .delete("/users/2")
+                .then()
+                .statusCode(204).log().all();
+    }
+
+    }
+
+
