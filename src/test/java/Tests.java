@@ -1,12 +1,9 @@
-import io.restassured.RestAssured;
-import io.restassured.matcher.ResponseAwareMatcher;
-import io.restassured.response.Response;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.simple.JSONObject;
-import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
@@ -36,6 +33,7 @@ public class Tests {
     }
 
     //Create a New User
+
     @Test
     public void Add_User(){
 
@@ -60,7 +58,7 @@ public class Tests {
         JSONObject json =new JSONObject();
         json.put("name","AbdelrahmanAyman");
         json.put("Job","Software Tester");
-
+        System.out.println(json.toJSONString());
         baseURI="https://reqres.in/api";
 
         given().header("x-api-key","reqres-free-v1")
@@ -80,6 +78,88 @@ public class Tests {
                 .delete("/users/2")
                 .then()
                 .statusCode(204).log().all();
+    }
+    @Test
+    public void Register_valid_user()
+    {
+        JSONObject j1son =new JSONObject();
+        j1son.put("password","pistol");
+        j1son.put("email","eve.holt@reqres.in");
+
+//        System.out.println(j1son.toJSONString());
+        baseURI="https://reqres.in/api";
+
+        given().header("x-api-key","reqres-free-v1").header("Content-Type","application/json")
+                .body(j1son.toJSONString())
+                .when()
+                .post("/register")
+                .then()
+                .statusCode(200);
+    }
+    @Test
+    public void Register_Invalid_user()
+    {
+        JSONObject j1son =new JSONObject();
+        j1son.put("email","sydney@fife");
+
+//        System.out.println(j1son.toJSONString());
+        baseURI="https://reqres.in/api";
+
+        given().header("x-api-key","reqres-free-v1").header("Content-Type","application/json")
+                .body(j1son.toJSONString())
+                .when()
+                .post("/register")
+                .then()
+                .statusCode(400);
+    }
+    @Test
+    public void Valid_Login()
+    {
+        JSONObject j1son =new JSONObject();
+        j1son.put("email","eve.holt@reqres.in");
+        j1son.put("password","cityslicka");
+
+//        System.out.println(j1son.toJSONString());
+        baseURI="https://reqres.in/api";
+
+        given().header("x-api-key","reqres-free-v1").header("Content-Type","application/json")
+                .body(j1son.toJSONString())
+                .when()
+                .post("/login")
+                .then()
+                .statusCode(200);
+    }
+    @Test
+    public void Invalid_Login()
+    {
+        JSONObject j1son =new JSONObject();
+        j1son.put("email","peter@klaven");
+
+//        System.out.println(j1son.toJSONString());
+        baseURI="https://reqres.in/api";
+
+        given().header("x-api-key","reqres-free-v1").header("Content-Type","application/json")
+                .body(j1son.toJSONString())
+                .when()
+                .post("/login")
+                .then()
+                .statusCode(400);
+    }
+    @Test
+    public void Delay_Response()
+    {
+        JSONObject j1son =new JSONObject();
+        j1son.put("email","peter@klaven");
+
+//        System.out.println(j1son.toJSONString());
+        baseURI="https://reqres.in/api";
+
+        given().header("x-api-key","reqres-free-v1").header("Content-Type","application/json")
+                .body(j1son.toJSONString())
+                .when()
+                .get("/users?delay=3")
+                .then()
+                .statusCode(200);
     }
 
     }
